@@ -117,7 +117,7 @@ class WP_USERCREATESPOST {
 			'action'              => 'wp_after_insert_post',
 			'priority'            => 90,
 			'accepted_args'       => 4,
-			'validation_function' => array( $this, 'schedule_a_post' ),
+			'validation_function' => array( $this, 'post_published' ),
 			'options_callback'    => array( $this, 'load_options' ),
 		);
 
@@ -174,41 +174,10 @@ class WP_USERCREATESPOST {
 	}
 
 	/**
-	 * @param $post_id
-	 * @param $post
-	 * @param $update
-	 * @param $post_before
+	 *
 	 */
-	public function schedule_a_post( $post_id, $post, $update, $post_before ) {
-		if ( ! empty( $post_before ) && 'publish' === $post_before->post_status ) {
-			return;
-		}
-
-		if ( 'publish' !== $post->post_status ) {
-			return;
-		}
-
-		$cron_enabled = apply_filters( 'automator_wp_user_creates_post_cron_enabled', '__return_true', $post_id, $post, $update, $post_before, $this );
-
-		// Allow people to disable cron processing.
-		if ( false === $cron_enabled ) {
-			// Immediately run post_publised if cron not enabled.
-			return $this->post_published( $post_id );
-		}
-
-		if ( wp_next_scheduled( 'uoa_wp_after_insert_post', array( $post_id ) ) ) {
-			return;
-		}
-
-		// Scheduling for 5 sec so that all tax/terms are stored
-		return wp_schedule_single_event(
-			apply_filters( 'automator_schedule_a_post_time', time() + 5, $post_id, $post, $update, $post_before ),
-			'uoa_wp_after_insert_post',
-			array(
-				$post_id,
-			)
-		);
-
+	public function plugins_loaded() {
+		$this->define_trigger();
 	}
 
 	/**
@@ -216,8 +185,7 @@ class WP_USERCREATESPOST {
 	 *
 	 * @param $post_id
 	 */
-	public function post_published( $post_id ) {
-		$post                   = get_post( $post_id );
+	public function post_published( $post_id, $post, $update, $post_before ) {
 		$this->post             = $post;
 		$user_id                = absint( isset( $post->post_author ) ? $post->post_author : 0 );
 		$recipes                = Automator()->get->recipes_from_trigger_code( $this->trigger_code );
