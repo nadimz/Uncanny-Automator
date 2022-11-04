@@ -106,11 +106,7 @@ class WP_CREATE_ROLE {
 			return;
 		}
 
-		if ( ! add_role( $role_name, $role_display_name) ) {
-			$action_data['complete_with_errors'] = true;
-			Automator()->complete->action( 0, $action_data, $recipe_id, sprintf( esc_attr__( 'Role already exists: %1$s', 'uncanny-automator' ), $role_name ) );
-			return;
-		}
+		add_role( $role_name, $role_display_name);
 
 		Automator()->complete->user->action( $user_id, $action_data, $recipe_id );
 	}
