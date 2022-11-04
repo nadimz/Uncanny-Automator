@@ -112,7 +112,7 @@ class WP_CREATE_USER {
 
 		// Username is mandatory. Return error its not valid.
 		if ( isset( $action_data['meta']['USERNAME'] ) ) {
-			$username = Automator()->parse->text( $action_data['meta']['USERNAME'], $recipe_id, $user_id, $args );
+			$username = sanitize_user( Automator()->parse->text( $action_data['meta']['USERNAME'], $recipe_id, $user_id, $args ) );
 			if ( ! validate_username( $username ) ) {
 				$action_data['complete_with_errors'] = true;
 				/* translators: Create a {{user}} - Error while creating a new user */
@@ -130,7 +130,7 @@ class WP_CREATE_USER {
 
 		// Email is mandatory. Return error its not valid.
 		if ( isset( $action_data['meta']['EMAIL'] ) ) {
-			$email = Automator()->parse->text( $action_data['meta']['EMAIL'], $recipe_id, $user_id, $args );
+			$email = sanitize_email( Automator()->parse->text( $action_data['meta']['EMAIL'], $recipe_id, $user_id, $args ) );
 			if ( ! is_email( $email ) ) {
 				$action_data['complete_with_errors'] = true;
 				/* translators: Create a {{user}} - Error while creating a new user */
@@ -154,7 +154,7 @@ class WP_CREATE_USER {
 
 		// Password
 		if ( isset( $action_data['meta']['PASSWORD'] ) && ! empty( $action_data['meta']['PASSWORD'] ) ) {
-			$userdata['user_pass'] = Automator()->parse->text( $action_data['meta']['PASSWORD'], $recipe_id, $user_id, $args );
+			$userdata['user_pass'] = sanitize_text_field( Automator()->parse->text( $action_data['meta']['PASSWORD'], $recipe_id, $user_id, $args ) );
 		} else {
 			// Auto-generate a password
 			$userdata['user_pass'] = wp_generate_password();
@@ -162,17 +162,17 @@ class WP_CREATE_USER {
 
 		// First name
 		if ( isset( $action_data['meta']['FIRST_NAME'] ) && ! empty( $action_data['meta']['FIRST_NAME'] ) ) {
-			$userdata['first_name'] = Automator()->parse->text( $action_data['meta']['FIRST_NAME'], $recipe_id, $user_id, $args );
+			$userdata['first_name'] = sanitize_text_field( Automator()->parse->text( $action_data['meta']['FIRST_NAME'], $recipe_id, $user_id, $args ) );
 		}
 
 		// Last name
 		if ( isset( $action_data['meta']['LAST_NAME'] ) && ! empty( $action_data['meta']['LAST_NAME'] ) ) {
-			$userdata['last_name'] = Automator()->parse->text( $action_data['meta']['LAST_NAME'], $recipe_id, $user_id, $args );
+			$userdata['last_name'] = sanitize_text_field( Automator()->parse->text( $action_data['meta']['LAST_NAME'], $recipe_id, $user_id, $args ) );
 		}
 
 		// Role
 		if ( isset( $action_data['meta']['WPROLE'] ) && ! empty( $action_data['meta']['WPROLE'] ) ) {
-			$userdata['role'] = $action_data['meta']['WPROLE'];
+			$userdata['role'] = sanitize_text_field( $action_data['meta']['WPROLE'] );
 		} else {
 			$userdata['role'] = get_option( 'default_role', 'subscriber' );
 		}		
