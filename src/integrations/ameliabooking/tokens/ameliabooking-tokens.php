@@ -109,6 +109,7 @@ class AMELIABOOKING_TOKENS {
 			$this->get_reservation_tokens(),
 			$this->get_coupon_tokens(),
 			$this->get_reservation_tokens_pro()
+			$this->get_customer_tokens(),
 		);
 
 		$arr_column_tokens_collection = array_column( $tokens_collection, 'name' );
