@@ -205,6 +205,19 @@ class AMELIABOOKING_TOKENS {
 
 			$reservation = array_shift( $args['trigger_args'] );
 
+			if ( isset( $reservation['booking']['customer']['email'] ) && ! empty( $reservation['booking']['customer']['email'] ) ) {
+				$reservation['customer']['email'] = $reservation['booking']['customer']['email'];
+				error_log( print_r( $reservation, true ) );
+			}
+
+			if ( isset( $reservation['booking']['customer']['firstName'] ) && ! empty( $reservation['booking']['customer']['firstName'] ) ) {
+				$reservation['customer']['firstName'] = $reservation['booking']['customer']['firstName'];
+			}
+
+			if ( isset( $reservation['booking']['customer']['lastName'] ) && ! empty( $reservation['booking']['customer']['lastName'] ) ) {
+				$reservation['customer']['lastName'] = $reservation['booking']['customer']['lastName'];
+			}
+
 			$reservation['event']['date'] = $helper->get_event_date( $reservation );
 
 			$reservation['event']['tags'] = $helper->get_event_tags( $reservation );
